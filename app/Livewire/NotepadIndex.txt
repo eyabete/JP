@@ -1,0 +1,13 @@
+public function editNote()
+    {
+        // Implement editing logic here if needed
+    }
+
+    public function deleteNote($noteId)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            $user->notes()->find($noteId)->delete();
+        }
+    }
