@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Note extends Model
 {
     use HasFactory;
-    
-    protected $fillable = ['content'];
+
+    protected $fillable = ['title', 'content'];
 
     public function user()
     {

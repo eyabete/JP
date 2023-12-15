@@ -2,6 +2,7 @@
 
 use App\Livewire\TaskIndex;
 use App\Livewire\NotepadIndex;
+use App\Livewire\TaskNotification; 
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +30,5 @@ Route::middleware([
     })->name('dashboard');
     Route::get('/task', TaskIndex::class)->name('task.index');
     Route::get('/note', NotepadIndex::class)->name('notepad.index');
+    Route::get('/notifications', TaskNotification::class)->name('notifications.index');
 });

@@ -17,5 +17,10 @@ class TodoItem extends Model
     protected $fillable = [
         'todo',
         'completed',
+        'deadline', // Add the deadline attribute
+    ];
+
+    protected $dates = [
+        'deadline', // Treat the 'deadline' attribute as a date
     ];
 }

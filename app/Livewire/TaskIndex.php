@@ -11,6 +11,7 @@ class TaskIndex extends Component
 {
     public $todos;
     public string $todoText = '';
+    public $todoDeadline;
 
     public function mount()
     {
@@ -31,9 +32,11 @@ class TaskIndex extends Component
             $user->todos()->create([
                 'todo' => $this->todoText,
                 'completed' => false,
+                'deadline' => $this->todoDeadline,
             ]);
 
             $this->todoText = '';
+            $this->todoDeadline = '';
             $this->selectTodos();
         }
     }
@@ -76,5 +79,11 @@ class TaskIndex extends Component
         // Retrieve only tasks that belong to the authenticated user
         $user = Auth::user();
         $this->todos = $user->todos()->orderBy('created_at', 'DESC')->get();
+
+        // Make sure the 'deadline' attribute is cast to a DateTime instance
+        $this->todos->transform(function ($todo) {
+            $todo->deadline = $todo->deadline ? now()->parse($todo->deadline) : null;
+            return $todo;
+        });
     }
 }

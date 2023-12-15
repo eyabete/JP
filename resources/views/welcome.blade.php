@@ -35,11 +35,6 @@
             font-family: 'Roboto', sans-serif;
         }
 
-        h2 {
-            color: #6a5acd;
-            /* Lavender */
-        }
-
         p {
             color: #333;
         }
@@ -59,7 +54,7 @@
             text-decoration: none;
             font-size: 16px;
             font-weight: bold;
-            color: #6a5acd;
+            color: black;
             background-color: #f9fa88;
             /* light yellow */
             border: none;

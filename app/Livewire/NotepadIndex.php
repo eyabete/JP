@@ -8,18 +8,22 @@ use App\Models\Note;
 
 class NotepadIndex extends Component
 {
-    public $newNote = '';
+    public $newNote = [
+        'title' => '',
+        'content' => '',
+    ];
+
     public $notes;
     public $editingNoteId = null;
 
     protected $rules = [
-        'newNote' => 'required|string',
+        'newNote.title' => 'required|string',
+        'newNote.content' => 'required|string',
     ];
 
     public function render()
     {
-        $user = Auth::user();
-        $this->notes = $user ? $user->notes()->latest()->get() : [];
+        $this->selectNotes();
 
         return view('livewire.notepad-index');
     }
@@ -31,11 +35,12 @@ class NotepadIndex extends Component
         $user = Auth::user();
 
         if ($user) {
-            $user->notes()->create([
-                'content' => $this->newNote,
-            ]);
+            $user->notes()->create($this->newNote);
 
-            $this->newNote = ''; // Clear the input field after adding a note
+            $this->newNote = [
+                'title' => '',
+                'content' => '',
+            ]; // Clear the input fields after adding a note
             $this->selectNotes(); // Refresh the notes list
         }
     }
@@ -46,7 +51,10 @@ class NotepadIndex extends Component
         $note = $this->notes->find($noteId);
 
         if ($note) {
-            $this->newNote = $note->content; // Set the initial content when editing
+            $this->newNote = [
+                'title' => $note->title,
+                'content' => $note->content,
+            ]; // Set the initial title and content when editing
         }
     }
 
@@ -58,14 +66,27 @@ class NotepadIndex extends Component
         $note = $user->notes()->find($noteId);
 
         if ($note) {
-            $note->update([
-                'content' => $note->content . $this->newNote, // Append new content
-            ]);
+            if ($this->editingNoteId) {
+                // If in edit mode, update the existing note
+                $note->update([
+                    'title' => $this->newNote['title'],
+                    'content' => $this->newNote['content'],
+                ]);
+            } else {
+                // If not in edit mode, create a new note
+                $user->notes()->create($this->newNote);
+            }
 
             $this->editingNoteId = null; // Reset the editing state
+            $this->newNote = [
+                'title' => '',
+                'content' => '',
+            ]; // Clear the input fields
             $this->selectNotes(); // Refresh the notes list
         }
     }
+
+
 
     public function cancelEdit()
     {
@@ -89,5 +110,18 @@ class NotepadIndex extends Component
         // Retrieve only notes that belong to the authenticated user
         $user = Auth::user();
         $this->notes = $user->notes()->orderBy('created_at', 'DESC')->get();
+    }
+
+    public function toggleContent($noteId)
+    {
+        // Toggle the visibility of the content for the specified note
+        // You can use the $this->notes property to track the visibility state of each note
+        // For example, you can add a 'showContent' attribute to each note in the $this->notes array
+
+        $note = $this->notes->find($noteId);
+
+        if ($note) {
+            $note->showContent = !$note->showContent;
+        }
     }
 }
